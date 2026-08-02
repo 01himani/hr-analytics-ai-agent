@@ -21,7 +21,7 @@ def calculate_kpis(df):
 
     average_age = round(df["Age"].mean(), 2)
 
-    average_salary = round(df["MonthlyIncome"].mean(), 2)
+    average_salary = round(df["Annual Salary (INR)"].mean(), 2)
 
     return {
         "Total Employees": total_employees,
