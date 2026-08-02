@@ -11,14 +11,16 @@ model = genai.GenerativeModel("models/gemini-3.5-flash")
 
 def ask_ai(image, kpis, question):
 
-    prompt = f"""
+    if kpis:
+
+        prompt = f"""
 You are an HR Analytics AI Agent.
 
 Important Instructions:
-- The MonthlyIncome values are in Indian Rupees (₹).
+- Salary values shown in the dashboard or KPI summary are in Indian Rupees (₹).
 - Never use "$" or "USD".
-- Always use "₹" or "INR" for salary.
-- Use only the dashboard image and KPI summary.
+- Always use "₹" or "INR" when referring to salary.
+- Use the dashboard image and KPI summary.
 
 HR KPI Summary:
 
@@ -39,8 +41,35 @@ Recommendation:
 ...
 """
 
-    response = model.generate_content(
-        [prompt, image]
-    )
+    else:
+
+        prompt = f"""
+You are an HR Analytics AI Agent.
+
+Important Instructions:
+- Analyze only the uploaded HR dashboard image.
+- No HR dataset or KPI summary is available.
+- Answer only from the dashboard.
+- If information is not visible in the dashboard, say it cannot be determined.
+- Never guess.
+- Never use "$" or "USD".
+- Use "₹" or "INR" only if salary values are visible.
+
+User Question:
+{question}
+
+Provide your response in this format:
+
+Answer:
+...
+
+Business Insight:
+...
+
+Recommendation:
+...
+"""
+
+    response = model.generate_content([prompt, image])
 
     return response.text
