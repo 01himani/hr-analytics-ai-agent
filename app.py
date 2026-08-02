@@ -17,7 +17,7 @@ st.set_page_config(
 # -----------------------------
 st.title("🤖 HR Analytics AI Agent")
 
-st.write("Upload your HR Dashboard and HR Dataset.")
+st.write("Upload your HR Dashboard. You may also upload the HR dataset for enhanced KPI-based insights.")
 
 # -----------------------------
 # Upload Dashboard
@@ -27,13 +27,16 @@ dashboard = st.file_uploader(
     type=["png", "jpg", "jpeg"]
 )
 
+st.caption("📌 The HR dataset is optional. If not uploaded, the AI will analyze only the dashboard image.")
 # -----------------------------
 # Upload Dataset
 # -----------------------------
 dataset = st.file_uploader(
-    "📄 Upload HR Dataset",
+    "📄 Upload HR Dataset (Optional)",
     type=["xlsx"]
 )
+
+
 
 # -----------------------------
 # User Question
@@ -51,31 +54,30 @@ if st.button("🔍 Analyze"):
     if dashboard is None:
         st.warning("Please upload the dashboard image.")
 
-    elif dataset is None:
-        st.warning("Please upload the HR dataset.")
-
     elif question.strip() == "":
         st.warning("Please enter a question.")
 
     else:
 
-        df = load_data(dataset)
+        kpis = None
 
-        kpis = calculate_kpis(df)
-
-        st.success("Files uploaded successfully!")
+        st.success("Dashboard uploaded successfully!")
 
         st.write("Dashboard :", dashboard.name)
 
-        st.write("Dataset :", dataset.name)
+        if dataset is not None:
 
-        st.subheader("Dataset Preview")
+            df = load_data(dataset)
 
-        st.dataframe(df.head())
+            st.write("Dataset :", dataset.name)
 
-        st.subheader("HR KPI Summary")
+            st.subheader("Dataset Preview")
+            st.dataframe(df.head())
 
-        st.write(kpis)
+            kpis = calculate_kpis(df)
+
+            st.subheader("HR KPI Summary")
+            st.json(kpis)
 
         image = Image.open(dashboard)
 
